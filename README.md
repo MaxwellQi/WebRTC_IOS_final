@@ -23,3 +23,11 @@ The latest webrtc library integration
 * WebRTC.framework 是一个最新的WebRTC库，不是libjingle那个版本的。
 
 
+### 其它
+
+关于VOIP通信，即 socket.io 和 WebRTC 的原理和详细说明以及注意事项，可以参考博客 [WebRTC通信的原理](https://github.com/MaxwellQi/summ-webrtc-knowledge)
+
+
+### MaxwellQi
+
+[More about me](https://maxwellqi.github.io/about-me/)

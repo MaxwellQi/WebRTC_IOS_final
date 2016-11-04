@@ -1,5 +1,5 @@
 //
-//  TVUSignaling.hpp
+//  QiSignaling.hpp
 //  TVUAnywhere
 //
 //  Created by zhangqi on 14/10/2016.
@@ -43,12 +43,12 @@ typedef struct TVUVOIPMessageQueue
     VOIPQNode *rear;
 }TVUVOIPMessageQueue;
 
-class TVUSignaling
+class QiSignaling
 {
 public:
-    static TVUSignaling * getInstance();
-    TVUSignaling();
-    ~TVUSignaling();
+    static QiSignaling * getInstance();
+    QiSignaling();
+    ~QiSignaling();
     int beginConnection();
     void postanswer(const char* sdp,const char* callfromnumber);
     void postice(const char* candidate,const char* sdpMid,const char* sdpMLineIndex,const char* callfromnumber);
@@ -69,7 +69,7 @@ public:
 private:
     sio::client sclient;
     void onopen();
-    static TVUSignaling * m_instance;
+    static QiSignaling * m_instance;
     std::string tvuusernumber;
     
     pthread_mutex_t queue_mutex;

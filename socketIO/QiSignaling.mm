@@ -1,12 +1,12 @@
 //
-//  TVUSignaling.cpp
+//  QiSignaling.cpp
 //  TVUAnywhere
 //
 //  Created by zhangqi on 14/10/2016.
 //
 //
 
-#include "TVUSignaling.h"
+#include "QiSignaling.h"
 #import <Foundation/Foundation.h>
 #include <iostream>
 #import "NSJSONSerialization+TVU.h"
@@ -15,44 +15,44 @@ using namespace sio;
 #include <string.h>
 #import "TVUConst.h"
 
-TVUSignaling::TVUSignaling()
+QiSignaling::QiSignaling()
 {
     m_messageQueue = (TVUVOIPMessageQueue*)malloc(sizeof(struct TVUVOIPMessageQueue));
     InitQueue(m_messageQueue);
     pthread_mutex_init(&queue_mutex, NULL);
 }
 
-TVUSignaling::~TVUSignaling()
+QiSignaling::~QiSignaling()
 {
 }
 
-TVUSignaling * TVUSignaling::m_instance = NULL;
-TVUSignaling * TVUSignaling::getInstance()
+QiSignaling * QiSignaling::m_instance = NULL;
+QiSignaling * QiSignaling::getInstance()
 {
     if (m_instance == NULL) {
-        m_instance = new TVUSignaling();
+        m_instance = new QiSignaling();
     }
     return m_instance;
 }
 
-void TVUSignaling::setTvuusernumber(std::string tvuusernumber)
+void QiSignaling::setTvuusernumber(std::string tvuusernumber)
 {
     this->tvuusernumber = tvuusernumber;
 }
 
-std::string TVUSignaling::getTvuusernumber()
+std::string QiSignaling::getTvuusernumber()
 {
     return this->tvuusernumber;
 }
 
-void TVUSignaling::InitQueue(TVUVOIPMessageQueue *Q)
+void QiSignaling::InitQueue(TVUVOIPMessageQueue *Q)
 {
     Q->size = 0;
     Q->front = NULL;
     Q->rear = NULL;
 }
 
-void TVUSignaling::EnQueue(TVUVOIPMessageQueue *Q,const char* data,int len ,KSignalingType type)
+void QiSignaling::EnQueue(TVUVOIPMessageQueue *Q,const char* data,int len ,KSignalingType type)
 {
     VOIPQNode* node = (VOIPQNode *)malloc(sizeof(VOIPQNode));
     node->data = (char *)malloc(len+1);
@@ -78,7 +78,7 @@ void TVUSignaling::EnQueue(TVUVOIPMessageQueue *Q,const char* data,int len ,KSig
 }
 
 
-VOIPQNode* TVUSignaling::DeQueue(TVUVOIPMessageQueue *Q)
+VOIPQNode* QiSignaling::DeQueue(TVUVOIPMessageQueue *Q)
 {
     VOIPQNode* element = NULL;
     
@@ -98,14 +98,14 @@ VOIPQNode* TVUSignaling::DeQueue(TVUVOIPMessageQueue *Q)
     return element;
 }
 
-void TVUSignaling::FreeNode(VOIPQNode* Node){
+void QiSignaling::FreeNode(VOIPQNode* Node){
     if(Node != NULL){
         free(Node->data);
         free(Node);
     }
 }
 
-void TVUSignaling::onopen()
+void QiSignaling::onopen()
 {
     printf("connect succ\n");
     NSString *usernumber = [NSString stringWithCString:this->getTvuusernumber().c_str() encoding:NSUTF8StringEncoding];
@@ -114,7 +114,7 @@ void TVUSignaling::onopen()
     sclient.socket()->emit("login",requestparam_login);
 }
 
-void TVUSignaling::postanswer(const char* sdp,const char* callfromnumber)
+void QiSignaling::postanswer(const char* sdp,const char* callfromnumber)
 {
     if (sdp == NULL||strlen(sdp) <=0) {
         return;
@@ -128,7 +128,7 @@ void TVUSignaling::postanswer(const char* sdp,const char* callfromnumber)
     }
 }
 
-void TVUSignaling::postice(const char* candidate,const char* sdpMid,const char* sdpMLineIndex,const char* callfromnumber)
+void QiSignaling::postice(const char* candidate,const char* sdpMid,const char* sdpMLineIndex,const char* callfromnumber)
 {
     NSDictionary *dict = @{@"to":[NSString stringWithUTF8String:callfromnumber],@"candidate":[NSString stringWithUTF8String:candidate],@"sdpMid":[NSString stringWithUTF8String:sdpMid],@"sdpMLineIndex":[NSString stringWithUTF8String:sdpMLineIndex]};
     
@@ -139,7 +139,7 @@ void TVUSignaling::postice(const char* candidate,const char* sdpMid,const char* 
     }
 }
 
-void TVUSignaling::postResponse(bool isAccept,const char* callfromnumber)
+void QiSignaling::postResponse(bool isAccept,const char* callfromnumber)
 {
     NSString *response_value = isAccept ? @"true" : @"false";
     NSDictionary *dict = @{@"to":[NSString stringWithUTF8String:callfromnumber],@"response":response_value};
@@ -147,7 +147,7 @@ void TVUSignaling::postResponse(bool isAccept,const char* callfromnumber)
     sclient.socket()->emit("call_response",responseParam);
 }
 
-void TVUSignaling::postDisconnectpeer(const char* peername)
+void QiSignaling::postDisconnectpeer(const char* peername)
 {
     NSString *peerName = [NSString stringWithUTF8String:peername];
     NSDictionary *dict = @{@"to":peerName};
@@ -158,9 +158,9 @@ void TVUSignaling::postDisconnectpeer(const char* peername)
     }
 }
 
-int TVUSignaling::beginConnection()
+int QiSignaling::beginConnection()
 {
-    sclient.set_open_listener(std::bind(&TVUSignaling::onopen, this));
+    sclient.set_open_listener(std::bind(&QiSignaling::onopen, this));
     sclient.socket()->on("login", sio::socket::event_listener_aux([&](string const&name,
                                                                       message::ptr const& data,bool isAck,message::list &ack_resp)
                                                                   {
